@@ -17,19 +17,86 @@ def transform_idade(df):
 
     return df
 
-# def transform_idade_semanas(df):
-#     for idx, d in enumerate(df["idade"]):
-#         if(d.__contains__('semana')):
-#             d = d.replace("semanas", "").strip()
-#             d = d.replace("semana", "").strip()
-#             df.loc[idx, "idade"] = int(d)
-#         if(d.__contains__('dia')):
-#             d = d.replace("dias", "").strip()
-#             df.loc[idx, "idade"] = int(d.replace("dia", "").strip()) / 7
-#         if(d.__contains__('seamans')):
-#             df.loc[idx, "idade"] = int(d.replace("seamans", "").strip())
-
-#     return df
+# Cria grupos de idade
+def idade_in_groups(df):
+    idade_lt6 = [];
+    idade_lt15 = [];
+    idade_lt40 = [];
+    idade_lt50 = [];
+    idade_lt100 = [];
+    idade_lt150 = [];
+    idade_mt150 = [];
+    
+    for idx, d in enumerate(df["idade"]):
+        if d < 6:
+            idade_lt6.append(1);
+            idade_lt15.append(0);
+            idade_lt40.append(0);
+            idade_lt50.append(0);
+            idade_lt100.append(0);
+            idade_lt150.append(0);
+            idade_mt150.append(0);
+        elif d < 15:
+            idade_lt6.append(0);
+            idade_lt15.append(1);
+            idade_lt40.append(0);
+            idade_lt50.append(0);
+            idade_lt100.append(0);
+            idade_lt150.append(0);
+            idade_mt150.append(0);
+        elif d < 40:
+            idade_lt6.append(0);
+            idade_lt15.append(0);
+            idade_lt40.append(1);
+            idade_lt50.append(0);
+            idade_lt100.append(0);
+            idade_lt150.append(0);
+            idade_mt150.append(0);
+        elif d < 50:
+            idade_lt6.append(0);
+            idade_lt15.append(0);
+            idade_lt40.append(0);
+            idade_lt50.append(1);
+            idade_lt100.append(0);
+            idade_lt150.append(0);
+            idade_mt150.append(0);
+        elif d < 100:
+            idade_lt6.append(0);
+            idade_lt15.append(0);
+            idade_lt40.append(0);
+            idade_lt50.append(0);
+            idade_lt100.append(1);
+            idade_lt150.append(0);
+            idade_mt150.append(0);
+        elif d < 150:
+            idade_lt6.append(0);
+            idade_lt15.append(0);
+            idade_lt40.append(0);
+            idade_lt50.append(0);
+            idade_lt100.append(0);
+            idade_lt150.append(1);
+            idade_mt150.append(0);
+        elif d >= 150:
+            idade_lt6.append(0);
+            idade_lt15.append(0);
+            idade_lt40.append(0);
+            idade_lt50.append(0);
+            idade_lt100.append(0);
+            idade_lt150.append(0);
+            idade_mt150.append(1);
+    
+    materiais = df["materiais"] # to keep label in last col
+    df.drop("materiais", axis=1, inplace=True )
+    df["idade_lt6"] = idade_lt6
+    df["idade_lt15"] = idade_lt15
+    df["idade_lt40"] = idade_lt40
+    df["idade_lt50"] = idade_lt50
+    df["idade_lt100"] = idade_lt100
+    df["idade_lt150"] = idade_lt150
+    df["idade_mt150"] = idade_mt150
+    df.drop('idade', axis=1, inplace=True)
+    df["materiais"] = materiais
+    return df
 
 def transform_str_to_array(df):
     df["materiais"] = df["materiais_coletados_array"]
@@ -121,5 +188,6 @@ def pre_processing():
     df = transform_idade(df)
     df = transform_str_to_array(df)
     df = drop_unnecessary_features(df)
+    df = idade_in_groups(df)
 
     return df
