@@ -6,11 +6,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import functions as fn
 import numpy as np
-
+import random
 
 
 def main():
-
+    
+    SEED = 14
+    random.seed(SEED)
+    np.random.seed(SEED)
+    tf.random.set_seed(SEED)
     df = fn.pre_processing()
 
     #Encode dos campos string
@@ -32,17 +36,20 @@ def main():
     ##KNN
     x, y = df.iloc[:, :-1], df.iloc[:, [-1]]
     x_train, x_test, y_train, y_test = train_test_split(
-                x, y.values.ravel(), test_size = 0.2, random_state=5)
+                x, y.values.ravel(), test_size = 0.2, random_state=SEED)
     
     x_train = np.asarray(x_train).astype(np.int)
     #y_train = np.asarray(y_train).astype(np.int)
     y_train = np.asarray(fn.reduce_materiais_numbers(y_train)).astype(np.int)
 
+    x_test = np.asarray(x_test).astype(np.int)
+    y_test = np.asarray(fn.reduce_materiais_numbers(y_test)).astype(np.int)
+
     print(f"y_train: ${y_train}")
 
     model = tf.keras.models.Sequential([
         #tf.keras.layers.Dense(500, activation='relu', input_dim=10),
-        tf.keras.layers.Dense(120, activation='relu'),
+        tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dense(3, activation='softmax')
     ])
 
@@ -50,10 +57,9 @@ def main():
               loss='sparse_categorical_crossentropy',
               metrics=['categorical_accuracy'])
     
-    model.fit(x_train, y_train, epochs=5)
+    model.fit(x_train, y_train, epochs=8)
 
-    x_test = np.asarray(x_test).astype(np.int)
-    y_test = np.asarray(fn.reduce_materiais_numbers(y_test)).astype(np.int)
+    print(f'Accuracy: \n')
     model.evaluate(x_test, y_test)
     
 
