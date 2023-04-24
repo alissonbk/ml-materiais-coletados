@@ -116,6 +116,24 @@ def drop_unnecessary_features(df):
 
     return df
 
+# Para cada grupo de material o label encoder gerou um número no caso as 3 classes ficaram com um número acima 
+# de 100, para a camada de output seria interessante deixar 0 1 2
+def reduce_materiais_numbers(materiais):
+    new_materiais = []
+
+    #FIXME static numbers for the encoded arrays
+    for m in materiais:
+        if m == 145:
+            new_materiais.append(0)
+        if m == 179:
+            new_materiais.append(1)
+        if m == 194:
+            new_materiais.append(2)
+
+    return new_materiais
+
+
+
 def pre_processing():
     df = pd.read_csv('materiais2.csv')
     df = transform_idade(df)
