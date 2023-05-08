@@ -11,7 +11,7 @@ import random
 
 def main():
     
-    SEED = 14
+    SEED = 16
     random.seed(SEED)
     np.random.seed(SEED)
     tf.random.set_seed(SEED)
@@ -44,20 +44,24 @@ def main():
 
     x_test = np.asarray(x_test).astype(np.int)
     y_test = np.asarray(fn.reduce_materiais_numbers(y_test)).astype(np.int)
+    
+    print("x_test", x_test[:, 0])
+    print("y_test", y_test)
 
     print(f"y_train: ${y_train}")
 
     model = tf.keras.models.Sequential([
-        #tf.keras.layers.Dense(500, activation='relu', input_dim=10),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dense(3, activation='softmax')
+        tf.keras.layers.Dense(8,  input_dim= len(x_train[0, :]), activation='relu'),
+        tf.keras.layers.Dense(4, activation='relu'),
+        tf.keras.layers.Dense(4, activation='sigmoid')
     ])
 
+    model.summary()
     model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['categorical_accuracy'])
     
-    model.fit(x_train, y_train, epochs=8)
+    model.fit(x_train, y_train, epochs=12)
 
     print(f'Accuracy: \n')
     model.evaluate(x_test, y_test)
